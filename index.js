@@ -8,6 +8,10 @@ app.get('/', function(req, res){
     res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/chat', function(req, res){
+    res.sendFile(__dirname + '/chat.html');
+});
+
 io.on('connection', function(socket){
     console.log('a user connected');
 
@@ -16,8 +20,14 @@ io.on('connection', function(socket){
 
     // Broadcasts to all
     socket.on('chat message', function(msg){
-        msgs.push(msg);        
-        io.emit('chat message', `<strong>${JSON.parse(msg).username}</strong>: ${JSON.parse(msg).msg}`);
+        msgs.push(msg);
+        msg = JSON.parse(msg);
+        if (msg.msg.indexOf("::delete")>-1) {
+            msgs = [];
+            msg.msg = "<span style='color:red;'>ALL MESSAGES DELETED</span>";
+            msg.username = "Admin";
+        }
+        io.emit('chat message', `<strong>${msg.username}</strong>: ${msg.msg}`);
     });    
 
     // User is typing
@@ -32,5 +42,5 @@ io.on('connection', function(socket){
 const port = process.env.PORT || 5000;
 
 http.listen(port, function(){
-  console.log('listening on *:3000');
+  console.log(`listening on port ${port}`);
 });
