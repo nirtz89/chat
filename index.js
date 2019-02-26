@@ -3,6 +3,7 @@ var http = require('http').Server(app);
 var io = require("socket.io")(http);
 
 var msgs = [];
+var connected_users = [];
 
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/index.html');
@@ -14,6 +15,8 @@ app.get('/chat', function(req, res){
 
 io.on('connection', function(socket){
     console.log('a user connected');
+    connected_users.push("test");
+    socket.emit('users connected', connected_users);
 
     // Broadcasts to sender
     socket.emit('all messages', msgs);
