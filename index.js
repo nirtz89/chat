@@ -37,8 +37,9 @@ io.on('connection', function(socket){
     socket.on('user typing', function(user){
         socket.broadcast.emit('user typing', `${user}`);
     });    
-    socket.on('disconnect', function(){
+    socket.on('disconnect', function(user){
         console.log('user disconnected');
+        console.log(user);
     });
 });
 
